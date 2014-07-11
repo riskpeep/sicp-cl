@@ -54,7 +54,7 @@
          ((not (my-evenp n)) (fast-expt-iter b (- n 1) (* b a)))
          (T (fast-expt-iter (* b b) (/ n 2) a))))
 
-;; And some sugar to kick it .off
+;; And some sugar to kick it off
 (defun fast-expt-i (b n)
    (fast-expt-iter b n 1))
 
