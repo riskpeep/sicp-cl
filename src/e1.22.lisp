@@ -3,7 +3,7 @@
 ;  Most Lisp implementations include a primitive called runtime that returns
 ;  an integer that specifies the amount of time the system has been running
 ;  (measured, for example, in microseconds). The following timed-prime-test
-;  procedure, when called with an integern, prints n and checks to see if n is
+;  procedure, when called with an integer n, prints n and checks to see if n is
 ;  prime. If n is prime, the procedure prints three asterisks followed by the
 ;  amount of time used in performing the test.
 ;
@@ -30,7 +30,21 @@
 ;  compatible with the notion that programs on your machine run in time
 ;  proportional to the number of steps required for the computation?
 
-;; First we bring in some methods defined in the text
+;; First, we must identify the Common Lisp equivalent to the scheme runtime
+;; function.  In Common Lisp, there are two runtime functions: 
+;; get-internal-real-time and get-internal-run-time.  get-internal-real-time
+;; returns elapsed real-time in seconds.  This is not of sufficient resolution
+;; for our work here.  get-internal-run-time returns an implementation defined
+;; time that is measured in CPU time.  The units of get-internal-run-time are 
+;; undefined and thus the only useful comparison is between internal run times.
+;; Internal run times are, however, generally much more fine grained than 
+;; seconds.  The global parameter internal-time-units-per-second may be used
+;; to determine the translation between internal run time and real time.
+;;
+;; We can examine this translation as shown here
+internal-time-units-per-second
+
+;; Now, we may begin. First we bring in some methods defined in the text
 (defun square (a)
    (* a a))
 
@@ -38,12 +52,11 @@
    (= (rem b a) 0))
 
 (defun runtime ()
-   (. java.lang.System (clojure.core/nanoTime)))
+   (get-internal-run-time))
 
-;; Now we can implement the function
 (defun find-divisor (n test-divisor)
    (cond ((> (square test-divisor) n) n)
-         ((divides? test-divisor n) test-divisor)
+         ((dividesp test-divisor n) test-divisor)
          (T (find-divisor n (+ test-divisor 1)))))
 
 (defun smallest-divisor (n)
@@ -52,25 +65,35 @@
 (defun primep (n)
    (= n (smallest-divisor n)))
 
+;; Now we can implement the functions given in the problem
 (defun report-prime (elapsed-time)
-   (print " *** ")
-   (print elapsed-time))
+   (format t "*** ~A" elapsed-time))
 
 (defun start-prime-test (n start-time)
    (if (primep n)
        (report-prime (- (runtime) start-time))))
 
 (defun timed-prime-test (n)
-   (newline)
-   (print n)
+   (format t "~%")
+   (format t "~A " n)
    (start-prime-test n (runtime)))
 
-
+;; Testing timed-prime-test
 (timed-prime-test 7)
 (timed-prime-test 1999)
 (timed-prime-test 199)
 (timed-prime-test 19999)
 
+;; Implementing search-for-primes
+(defun search-for-primes (startnum endnum)
+  (cond ((>= startnum endnum) nil)
+        ((evenp startnum) (search-for-primes (1+ startnum) endnum))
+        (T (timed-prime-test startnum) 
+           (search-for-primes (+ startnum 2) endnum))))
 
+;; Now we can find primes
+(search-for-primes 1000 1020)
+(search-for-primes 10000 10040)
+(search-for-primes 100000 100040)
+(search-for-primes 1000000 1000040)
 
-(println)
