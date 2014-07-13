@@ -50,25 +50,41 @@
                  (* base (expmod base (- exp 1) m))
                  m))))
 
+;; Here we rename try-it to avoid a collision with CL try-it function
+;; CL rand function is random
 (defun fermat-test (n)
-   (defun try-it (a)
+   (defun my-try-it (a)
       (= (expmod a n n) a))
-   (try-it (+ 1 (rand (- n 1)))))
+   (my-try-it (+ 1 (random (- n 1)))))
 
-(defun fast-prime? (n times)
+(defun fast-primep (n times)
    (cond ((= times 0) T)
-         ((fermat-test n) (fast-prime? n (- times 1)))
+         ((fermat-test n) (fast-primep n (- times 1)))
          (T nil)))
 
 (defun report-prime (elapsed-time)
-   (print " *** ")
-   (print elapsed-time))
+   (format t "*** ~A" elapsed-time))
 
-(defun start-prime-test (n start-time)
-   (if (fast-prime? n)
+(defun runtime ()
+   (get-internal-real-time))
+
+(defun start-fast-prime-test (n times start-time)
+   (if (fast-primep n times)
        (report-prime (- (runtime) start-time))))
 
-(defun timed-prime-test (n)
-   (newline)
-   (print n)
-   (start-prime-test n (runtime)))
+(defun fast-timed-prime-test (n times)
+   (format t "~%")
+   (format t "~A " n)
+   (start-fast-prime-test n times (runtime)))
+
+(fast-timed-prime-test 1000000007 10)   ;; ~3   e1.22 ~6
+(fast-timed-prime-test 1000000009 10)   ;; ~3   e1.22 ~6
+(fast-timed-prime-test 1000000021 10)   ;; ~3   e1.22 ~6
+(fast-timed-prime-test 10000000019 10)  ;; ~11  e1.22 ~22
+(fast-timed-prime-test 10000000033 10)  ;; ~11  e1.22 ~22
+(fast-timed-prime-test 10000000061 10)  ;; ~11  e1.22 ~22
+(fast-timed-prime-test 100000000003 10) ;; ~36  e1.22 ~72
+(fast-timed-prime-test 100000000019 10) ;; ~36  e1.22 ~72
+(fast-timed-prime-test 100000000057 10) ;; ~36  e1.22 ~72
+
+

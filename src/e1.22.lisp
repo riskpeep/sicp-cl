@@ -31,15 +31,14 @@
 ;  proportional to the number of steps required for the computation?
 
 ;; First, we must identify the Common Lisp equivalent to the scheme runtime
-;; function.  In Common Lisp, there are two runtime functions: 
-;; get-internal-real-time and get-internal-run-time.  get-internal-real-time
-;; returns elapsed real-time in seconds.  This is not of sufficient resolution
-;; for our work here.  get-internal-run-time returns an implementation defined
-;; time that is measured in CPU time.  The units of get-internal-run-time are 
-;; undefined and thus the only useful comparison is between internal run times.
-;; Internal run times are, however, generally much more fine grained than 
+;; function.  In Common Lisp, the function we need is get-internal-real-time.
+;; get-internal-real-time returns an implementation defined time that is 
+;; measured in CPU time.  The units of get-internal-real-time are undefined
+;; and thus the only useful comparison is between internal real times.
+;; Internal real times are, however, generally much more fine grained than 
 ;; seconds.  The global parameter internal-time-units-per-second may be used
-;; to determine the translation between internal run time and real time.
+;; to determine the translation between internal real time differences and
+;; clock time differences in seconds.
 ;;
 ;; We can examine this translation as shown here
 internal-time-units-per-second
@@ -52,7 +51,7 @@ internal-time-units-per-second
    (= (rem b a) 0))
 
 (defun runtime ()
-   (get-internal-run-time))
+   (get-internal-real-time))
 
 (defun find-divisor (n test-divisor)
    (cond ((> (square test-divisor) n) n)
@@ -91,10 +90,40 @@ internal-time-units-per-second
         (T (timed-prime-test startnum) 
            (search-for-primes (+ startnum 2) endnum))))
 
+;; Before we begin searching for primes we calcuate (sqrt 10)
+(= 3.1622777 (sqrt 10))
+
 ;; Now we can find primes
-;; TODO timing seems broken, see if we can fix it
 (search-for-primes 1000 1020)
 (search-for-primes 10000 10040)
-(search-for-primes 100000 100040)
-(search-for-primes 1000000 1000040)
+(search-for-primes 100000 100045)
 
+;; Unfortunately on a modern laptop and using SBCL, the calculation times for
+;; all of these primes return 0 difference, implying that the resolution of
+;; get-internal-real-time (1 ms as reported by internal-time-units-per-second)
+;; is insufficient for such small numbers.  Using larger numbers will 
+;; eventually begin to return values we can use for comparison.
+(search-for-primes 1000000 1000040)            ;; ~0
+(search-for-primes 10000000 10000110)          ;; ~0
+(search-for-primes 100000000 100000040)        ;; ~0
+(search-for-primes 1000000000 1000000040)      ;; 6, 6, 6 -> ~6
+(search-for-primes 10000000000 10000000070)    ;; 21, 21, 22 -> ~21
+(search-for-primes 100000000000 100000000060)  ;; 74, 74, 68 -> ~72
+
+;; Now we can evaluate if growth is theta( (sqrt n) )
+(= 18.973667 (* 6 (sqrt 10)))      ;; Given 6, we'd expect ~19
+(= 66.40783  ( * 21 (sqrt 10)))    ;; Given 21, we'd expect ~66
+
+;; Do your timing data bear this out? How well do the data for 100,000 and
+;; 1,000,000 support the theta( (sqrt n) ) prediction?
+;;
+;;   Looking at our actual results (6 -> 21 -> 72), and our expected results
+;;   (6 -> 19, 21 -> 66), we see that our expected results align with actual
+;;   results
+;; 
+;; Is your result compatible with the notion that programs on your machine 
+;; run in time proportional to the number of steps required for the computation?
+;;
+;;   Yes, calculating the primality of larger numbers requires successively
+;;   more procedual steps as predicted by our estimate.  In this problem we
+;;   demonstrate that our estimates hold in practice.
