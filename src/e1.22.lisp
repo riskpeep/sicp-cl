@@ -92,6 +92,7 @@ internal-time-units-per-second
            (search-for-primes (+ startnum 2) endnum))))
 
 ;; Now we can find primes
+;; TODO timing seems broken, see if we can fix it
 (search-for-primes 1000 1020)
 (search-for-primes 10000 10040)
 (search-for-primes 100000 100040)
