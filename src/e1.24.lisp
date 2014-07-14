@@ -77,14 +77,14 @@
    (format t "~A " n)
    (start-fast-prime-test n times (runtime)))
 
-(fast-timed-prime-test 1000000007 10)   ;; ~3   e1.22 ~6
-(fast-timed-prime-test 1000000009 10)   ;; ~3   e1.22 ~6
-(fast-timed-prime-test 1000000021 10)   ;; ~3   e1.22 ~6
-(fast-timed-prime-test 10000000019 10)  ;; ~11  e1.22 ~22
-(fast-timed-prime-test 10000000033 10)  ;; ~11  e1.22 ~22
-(fast-timed-prime-test 10000000061 10)  ;; ~11  e1.22 ~22
-(fast-timed-prime-test 100000000003 10) ;; ~36  e1.22 ~72
-(fast-timed-prime-test 100000000019 10) ;; ~36  e1.22 ~72
-(fast-timed-prime-test 100000000057 10) ;; ~36  e1.22 ~72
+(fast-timed-prime-test 1000000007 1000)   ;; ~3   e1.22 ~6
+(fast-timed-prime-test 1000000009 1000)   ;; ~3   e1.22 ~6
+(fast-timed-prime-test 1000000021 1000)   ;; ~3   e1.22 ~6
+(fast-timed-prime-test 10000000019 1000)  ;; ~4  e1.22 ~22
+(fast-timed-prime-test 10000000033 1000)  ;; ~4  e1.22 ~22
+(fast-timed-prime-test 10000000061 1000)  ;; ~4  e1.22 ~22
+(fast-timed-prime-test 100000000003 1000) ;; ~4  e1.22 ~72
+(fast-timed-prime-test 100000000019 1000) ;; ~4  e1.22 ~72
+(fast-timed-prime-test 100000000057 1000) ;; ~4  e1.22 ~72
 
 
