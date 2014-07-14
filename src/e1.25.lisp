@@ -26,7 +26,7 @@
 ;; parameters in fast-expt to match expmod
 (defun fast-expt (base exp)
    (cond ((= exp 0) 1)
-         ((even? exp)
+         ((evenp exp)
             (square (fast-expt base (/ exp 2))))
          (T
             (* base (fast-expt base (- exp 1))))))
