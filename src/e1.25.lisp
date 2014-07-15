@@ -25,6 +25,7 @@
 ;; To simplify our comparison with the sec 1.2.6 expmod, we rename the
 ;; parameters in fast-expt to match expmod
 (defun fast-expt (base exp)
+   "A fast method for calculating the exponential of a given number."
    (cond ((= exp 0) 1)
          ((evenp exp)
             (square (fast-expt base (/ exp 2))))
@@ -33,6 +34,7 @@
 
 ;; Next we create sec. 1.2.6's version of expmod
 (defun expmod (base exp m)
+   "Computes the exponential of a number modulo another number"
    (cond ((= exp 0) 1)
          ((evenp exp)
              (rem
@@ -45,6 +47,7 @@
 
 ;; And finally Alyssa P. Hacker's implementation
 (defun expmod-aph (base exp m)
+   "Alyssa P. Hackers version of computing the exponential of a number modulo another number"
    (rem (fast-expt base exp) m))
 
 ;; Now we evaluate several examples to demonstrate the equivalence empirically
@@ -56,12 +59,20 @@
 ;; From an straight comparison, we see the approaches produce equivalent
 ;; results.
 ;;
-;; If we examine the two implementations more closely, we see that the sec 1.2.6
-;; implementation of expmod makes unneccessary calls to remainder in the
-;; recursive iterations.  Based on that observation, we expect that Alyssa P.
-;; Hacker's implementation will perform marginally better.
+;; If we examine the two implementations more closely, we see that the sec
+;; 1.2.6 implementation of expmod makes to remainder in the recursive 
+;; iterations, whereas Alyssa P. Hacker's implementation does not and instead 
+;; makes one call to remainder at the end of the exponentiation process.
+;; 
+;; Based on that observation, we would expect that Alyssa P. Hacker's 
+;; implementation will perform marginally better in most cases.  However, that
+;; is not the end of the story.  Alyssa P. Hacker's implementation also 
+;; rapidly creates extremely large numbers on which it is doing squares.  This
+;; means that most implementations will need to rely on the Lisp BigNum type,
+;; which cannot take advantage of processor accelerated mathematical 
+;; operations.  The result is that BigNum operations are much slower than 
+;; operations on smaller values.  
 ;;
-;; Since the fast prime method relies only on the results of the expmod
-;; function, we assert that Alyssa P. Hacker's method would perform as well or
-;; slightly better than the expmod implementation given in section 1.2.6.
-
+;; Thus Alyssa P. Hacker's implementation will acutally be much slower in 
+;; most cases than the expmod implementation given in section 1.2.6.
+;;

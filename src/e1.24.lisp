@@ -76,15 +76,15 @@
    (format t "~A " n)
    (start-fast-prime-test n times (runtime)))
 
-(fast-timed-prime-test 1000000007 1000)   ;; ~varies
-(fast-timed-prime-test 1000000009 1000)   ;; ~varies
-(fast-timed-prime-test 1000000021 1000)   ;; ~varies
-(fast-timed-prime-test 10000000019 1000)  ;; ~varies
-(fast-timed-prime-test 10000000033 1000)  ;; ~varies
-(fast-timed-prime-test 10000000061 1000)  ;; ~varies
-(fast-timed-prime-test 100000000003 1000) ;; ~varies
-(fast-timed-prime-test 100000000019 1000) ;; ~varies
-(fast-timed-prime-test 100000000057 1000) ;; ~varies
+(fast-timed-prime-test 1000000007 1000)   ;; ~varies  (150, 148, 157)  ~153
+(fast-timed-prime-test 1000000009 1000)   ;; ~varies  (139, 143, 157)  ~145
+(fast-timed-prime-test 1000000021 1000)   ;; ~varies  (151, 142, 153)  ~148  ~150
+(fast-timed-prime-test 10000000019 1000)  ;; ~varies  (169, 165, 171)  ~168
+(fast-timed-prime-test 10000000033 1000)  ;; ~varies  (179, 165, 166)  ~171
+(fast-timed-prime-test 10000000061 1000)  ;; ~varies  (176, 168, 180)  ~173  ~171
+(fast-timed-prime-test 100000000003 1000) ;; ~varies  (173, 180, 172)  ~176
+(fast-timed-prime-test 100000000019 1000) ;; ~varies  (321, 296, 196)  ~255
+(fast-timed-prime-test 100000000057 1000) ;; ~varies  (181, 180, 662)  ~300  ~255
 
 ;;  Since the Fermat test has theta(log n) growth, how would you expect the
 ;;  time to test primes near 1,000,000 to compare with the time needed to 
@@ -99,23 +99,32 @@
 ;;    times slower than the time to test primes near 1000.
 ;;
 (= 6.9077554 (- (log 1000000) (log 1000)))
+
+;; In the range our our tests above, we find an even smaller expected variance
+(= 4.6051693 (- (log 100000000057) (log 1000000007)))
 ;;
 ;;    However, in practice, we find the times to test any of the primes varies
 ;;    from being much lower than expected, to much longer than expected.  This
-;;    is due to the introduction of random number selction into the testing 
+;;    is due to the introduction of random number selection into the testing 
 ;;    procedure.  Since the Fermat test is not an exhaustive test, the number
 ;;    of tests is always likely to be much lower than the total range of
 ;;    possible numbers.  This plus the fact that the time to test a number is
 ;;    based on the selected number means that if the random selection is a low
 ;;    number, then the test proceeds quickly.  If it is a large number it 
-;;    proceeds more slowly.  Given a selection of number that comprises the
+;;    proceeds more slowly.  Given a selection of numbers that comprise the
 ;;    sample for the test, if the sample skews towards lower numbers or higher
 ;;    numbers, the reported time will be lower or higher respectively.
-;;    
+;;
 ;;    Taken together, this means that comparing the expected differences in 
 ;;    time we see widely varying differences.  One method to correct this
 ;;    would be to run a large number of samples for each calculation and take
 ;;    an average of the test times, on the expectation that random samples
 ;;    will tend on average to cover the entire range, and thus would exhibit
 ;;    consistent behavior in the aggregate.
+;;
+;;    In spite of this variance, we can make some observations about the growth
+;;    of the processing time assoicated with greater numbers.  Testing each of
+;;    the cases listed above 3 times yields some consistency, and we can see
+;;    that while the times to test do grow, they grow slowly, especially as n
+;;    scales, which would be consistent with logarithmic growth.
 

@@ -21,7 +21,7 @@
 ;  “By writing the procedure like that, you have transformed the theta(log n)
 ;  process into a theta(n) process.” Explain.
 
-;; The Lisp (and Clojure) evaluator performs applicative-order evaluation
+;; The Lisp (and Common Lisp) evaluator performs applicative-order evaluation
 ;; (See sec 1.1.5).  In applicative-order evaluation, function parameters
 ;; are evaluated by the interpreter before applying the function.
 ;;
@@ -35,7 +35,9 @@
 ;;
 ;; In this implmentation, and with the knowledge that Lisp uses applicative-
 ;; order evaluation, we see that the expmod function must be evaluated twice
-;; before applying the * function.
+;; before applying the * function.  In addition, each expmod suffers from the
+;; same issue, resulting in the transformation of the shape of evaluation from
+;; a linearly recursive function into a tree recursion with exponential growth.
 ;;
 ;; In contrast, with square, we would see the following implmeentation:
 ;;
@@ -44,4 +46,7 @@
 ;;
 ;; In this implementation, there is only one expmod parameter and the result
 ;; value is used twice in the body of square as parameters to *.
-
+;; 
+;; Since the duplicate evaluation is repeated in the recursive calls to expmod
+;; an exponential number of times, this transforms theta(log n) growth into 
+;; theta (n) growth.
