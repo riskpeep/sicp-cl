@@ -59,18 +59,31 @@
   (try-it (1- n)))
 
 ;; First some tests to confirm that everything is working correctly
+;; For non-prime numbers numbers we would expect this test to fail
 (eql nil (fermat-check 198))
 (eql nil (fermat-check 200))
+
+;; For prime numbers numbers we would expect this test to succeed
 (eql T (fermat-check 199))
 (eql T (fermat-check 1999))
 
 ;; Now tests to confirm that the listed Carmichael numbers do fool the Fermat
-;; test.
-(eql nil (fermat-check 561))
-(eql nil (fermat-check 1105))
-(eql nil (fermat-check 1729))
-(eql nil (fermat-check 2465))
-(eql nil (fermat-check 2821))
-(eql nil (fermat-check 6601))
-
-
+;; test.  For these numbers, we expect the test to fail since they are not
+;; prime, yet they succeed (which makes them Carmichael numbers).
+;; 
+;; For each of the numbers below, we show that they do indeed fool the test
+;; by returning T.  We also show that they are evenly divisible by whole 
+;; numbers
+;;
+(eql T (fermat-check 561))
+(= 0 (rem 561 3))
+(eql T (fermat-check 1105))
+(= 0 (rem 1105 5))
+(eql T (fermat-check 1729))
+(= 0 (rem 1729 7))
+(eql T (fermat-check 2465))
+(= 0 (rem 2465 5))
+(eql T (fermat-check 2821))
+(= 0 (rem 2821 7))
+(eql T (fermat-check 6601))
+(= 0 (rem 6601 7))
