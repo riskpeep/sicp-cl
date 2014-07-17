@@ -19,3 +19,54 @@
 ;  test with a procedure analogous to fermat-test. Check your procedure by
 ;  testing various known primes and non-primes. Hint: One convenient way to
 ;  make expmod signal is to have it return 0.
+ 
+;; First, we define some methods we'll need
+(defun square (a)
+   (* a a))
+
+;; From e1.24 we have
+(defun expmod (base exp m)
+   (cond ((= exp 0) 1)
+         ((evenp exp)
+          (let (a 
+                (rem
+                  (square (expmod base (/ exp 2) m))
+                  m))))
+         (T
+             (rem
+                 (* base (expmod base (- exp 1) m))
+                 m))))
+
+;; CL rand function is random
+(defun fermat-test (n)
+   (defun try-it (a)
+      (= (expmod a n n) a))
+   (try-it (+ 1 (random (- n 1)))))
+
+(defun miller-rabin-test (n)
+   (defun try-it (a)
+      (= (expmod a (1- n) n) 1))
+   (try-it (+ 1 (random (- n 1)))))
+
+
+(defun fast-primep (n times)
+   (cond ((= times 0) T)
+         ((fermat-test n) (fast-primep n (- times 1)))
+         (T nil)))
+
+(defun report-prime (elapsed-time)
+   (format t "*** ~A" elapsed-time))
+
+(defun runtime ()
+   (get-internal-real-time))
+
+(defun start-fast-prime-test (n times start-time)
+   (if (fast-primep n times)
+       (report-prime (- (runtime) start-time))))
+
+(defun fast-timed-prime-test (n times)
+   (format t "~%")
+   (format t "~A " n)
+   (start-fast-prime-test n times (runtime)))
+
+
