@@ -24,49 +24,61 @@
 (defun square (a)
    (* a a))
 
-;; From e1.24 we have
+;; Modifying the expmod from e1.24, we add the check for a congruence to 1
+;; modulo n. If a is congruent, we return zero, otherwise we return the 
+;; remainder
+;; 
+;; Here we introduce the common lisp let* macro.  let* produces bindings
+;; between one or more identifiers and declaration forms.  let* performs the
+;; bindings in sequence and thus successive bindings may refer to previously
+;; bound identifiers.  This is different that the standard let form which may
+;; use parallel evaluation and does not allow bindings to refer to previously
+;; bound items from the same let form.
 (defun expmod (base exp m)
    (cond ((= exp 0) 1)
          ((evenp exp)
-          (let (a 
-                (rem
-                  (square (expmod base (/ exp 2) m))
-                  m))))
+          (let* ((a (expmod base (/ exp 2) m))
+                 (b (rem (square a) m)))
+            (if (and (= 1 b)
+                     (not (= (1- m) a))
+                     (not (= 1 a)))
+              0
+              b)))
          (T
              (rem
                  (* base (expmod base (- exp 1) m))
                  m))))
 
 ;; CL rand function is random
-(defun fermat-test (n)
-   (defun try-it (a)
-      (= (expmod a n n) a))
-   (try-it (+ 1 (random (- n 1)))))
-
 (defun miller-rabin-test (n)
    (defun try-it (a)
       (= (expmod a (1- n) n) 1))
    (try-it (+ 1 (random (- n 1)))))
 
-
-(defun fast-primep (n times)
+(defun fast-mr-primep (n times)
    (cond ((= times 0) T)
-         ((fermat-test n) (fast-primep n (- times 1)))
+         ((miller-rabin-test n) (fast-mr-primep n (- times 1)))
          (T nil)))
 
-(defun report-prime (elapsed-time)
-   (format t "*** ~A" elapsed-time))
+;; Testing some non-primes.  We expect fast-mr-primep to return nil
+(eql nil (fast-mr-primep 21 100))
+(eql nil (fast-mr-primep 201 100))
+(eql nil (fast-mr-primep 2001 100))
+(eql nil (fast-mr-primep 19999 100))
 
-(defun runtime ()
-   (get-internal-real-time))
+;; Testing some primes.  We expect fast-mr-primep to return T
+(eql T (fast-mr-primep 199 100))
+(eql T (fast-mr-primep 1999 100))
+(eql T (fast-mr-primep 1000000007 100))
+(eql T (fast-mr-primep 1000000009 100))
+(eql T (fast-mr-primep 1000000021 100))
 
-(defun start-fast-prime-test (n times start-time)
-   (if (fast-primep n times)
-       (report-prime (- (runtime) start-time))))
-
-(defun fast-timed-prime-test (n times)
-   (format t "~%")
-   (format t "~A " n)
-   (start-fast-prime-test n times (runtime)))
-
-
+;; And to prove that the Miller Rabin test is not fooled by the Carmichael
+;; numbers, we'll test those too.  Since they are not prime, we expect 
+;; fast-mr-primep to return nil
+(eql nil (fast-mr-primep 561 100))
+(eql nil (fast-mr-primep 1105 100))
+(eql nil (fast-mr-primep 1729 100))
+(eql nil (fast-mr-primep 2465 100))
+(eql nil (fast-mr-primep 2821 100))
+(eql nil (fast-mr-primep 6601 100))
