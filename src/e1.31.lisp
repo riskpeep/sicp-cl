@@ -84,4 +84,34 @@
      (/ (product #'next-pi-numerator 1 #'inc steps)
         (product #'next-pi-denominator 1 #'inc steps))))
 
+;; Now we can test the calculation
+(= 3.2751012  (calc-pi 10))
+(= 3.05059    (calc-pi 15))
+(= 3.2137852  (calc-pi 20))
+(= 3.0839636  (calc-pi 25))
+(= 3.1910574  (calc-pi 30))
+
+;; As shown above, the calculation does converge towards ∏, albiet slowly.
+;; A problem with this implementation is that it creates extremely large 
+;; numbers and as a result using larger numbers of steps causes the procedure
+;; to fail with a number overflow.  An alternative implementation would be
+;; able to provide more precision.  We can accomplish this by implementing
+;; our pi-calc function using an alternate term method.
+(defun next-pi-term (x)
+  (/ (next-pi-numerator x) (next-pi-denominator x)))
+
+
+(defun calc-pi-alt (steps)
+  (* 4
+     (product #'next-pi-term 1 #'inc steps)))
+
+;; Now we can test the new calculation.  Note that we can use an arbitrarily 
+;; large number of steps in this calculation as a result of the modified term
+;; function
+(= 3.2751021  (calc-pi-alt 10))
+(= 3.191059   (calc-pi-alt 30))
+(= 3.1570325  (calc-pi-alt 100))
+(= 3.1493812  (calc-pi-alt 200))
+(= 3.1431723  (calc-pi-alt 1000))
+
 
