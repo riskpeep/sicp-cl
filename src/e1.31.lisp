@@ -51,7 +51,8 @@
 ;; And some tests to show that it works
 (= 1 (factorial 1))
 (= 2 (factorial 2))
-(= 3 (factorial 3))
+(= 6 (factorial 3))
+(= 24 (factorial 4))
 
 ;; For computing ∏ the problem gives:
 ;;
@@ -114,4 +115,29 @@
 (= 3.1493812  (calc-pi-alt 200))
 (= 3.1431723  (calc-pi-alt 1000))
 
+;;
+;;  Now for part b.
+;;  
+;;  b. If your product procedure generates a recursive process, write one that 
+;;  generates an iterative process. If it generates an iterative process, write 
+;;  one that generates a recursive process.
+;;
+;;  The product procedure shown above generates an iterative process.  We can 
+;;  modify it to produce a recursive process as shown below
+;;  
+(defun recursive-product (term a next b)
+   (defun iter (a)
+     (if (> a b)
+       1
+       (* (funcall term a) (iter (funcall next a)))))
+   (iter a)) 
 
+;; Finally, using our recursive-product function we can define factorial as follows
+(defun recursive-factorial (x) 
+  (recursive-product #'identity 1 #'inc x))
+
+;; And some tests to show that it works
+(= 1 (recursive-factorial 1))
+(= 2 (recursive-factorial 2))
+(= 6 (recursive-factorial 3))
+(= 24 (recursive-factorial 4))
