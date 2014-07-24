@@ -36,11 +36,11 @@
 ;;
 ;; Given these implementations, we can implement accumulate as follows 
 (defun accumulate (combiner null-value term a next b)
-  (defun iter (a result)
+  (labels ((iter (a result)
     (if (> a b)
       result
-      (iter (funcall next a) (funcall combiner result (funcall term a)))))
-  (iter a null-value))
+      (iter (funcall next a) (funcall combiner result (funcall term a))))))
+  (iter a null-value)))
 
 ;; Using accumulate, we can implement sum and product
 (defun sum (term a next b)
@@ -84,11 +84,11 @@
 ;;  modify it to produce a recursive process as shown below
 ;;  
 (defun recursive-accumulate (combiner null-value term a next b)
-   (defun iter (a)
+   (labels ((iter (a)
      (if (> a b)
        null-value
-       (funcall combiner (funcall term a) (iter (funcall next a)))))
-   (iter a)) 
+       (funcall combiner (funcall term a) (iter (funcall next a))))))
+   (iter a))) 
 
 ;; Finally, using our recursive-product function we can define factorial as follows
 (defun recursive-product (term a next b)

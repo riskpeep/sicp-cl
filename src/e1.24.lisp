@@ -51,10 +51,14 @@
 
 ;; Here we rename try-it to avoid a collision with CL try-it function
 ;; CL rand function is random
+;; Note here the use of CL labels.  In CL, all function definitions have
+;; dynamic scope, so an embedded defun results in a dynamically scoped
+;; (globally visible) function.  In CL, labels enables the creation of one
+;; or more lexically scoped functions.
 (defun fermat-test (n)
-   (defun my-try-it (a)
-      (= (expmod a n n) a))
-   (my-try-it (+ 1 (random (- n 1)))))
+   (labels ((my-try-it (a)
+      (= (expmod a n n) a)))
+   (my-try-it (+ 1 (random (- n 1))))))
 
 (defun fast-primep (n times)
    (cond ((= times 0) T)

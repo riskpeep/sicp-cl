@@ -51,9 +51,9 @@
 
 ;; CL rand function is random
 (defun miller-rabin-test (n)
-   (defun try-it (a)
-      (= (expmod a (1- n) n) 1))
-   (try-it (+ 1 (random (- n 1)))))
+   (labels ((try-it (a)
+      (= (expmod a (1- n) n) 1)))
+   (try-it (+ 1 (random (- n 1))))))
 
 (defun fast-mr-primep (n times)
    (cond ((= times 0) T)

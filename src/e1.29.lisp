@@ -42,16 +42,16 @@
 
 ;; Next, we create a utility function to return a coefficient for our yk terms.
 (defun simpsons-rule-integral (f a b n)
-  (defun simpsons-iterator (f a k h n accumulator)
+  (labels ((simpsons-iterator (f a k h n accumulator)
     (cond ((= k n) accumulator)
           (T (simpsons-iterator f a (1+ k) h n (+ accumulator
                                              (* (yk-coefficient k n)
-                                                (yk-term f a k h)))))))
+                                                (yk-term f a k h))))))))
   (cond ((not (evenp n)) nil)
         ((< n 0) nil)
         (T (let ((h-value (h-term a b n)))
              (* (/ h-value 3)
-                (simpsons-iterator f a 0 h-value n 0))))))
+                (simpsons-iterator f a 0 h-value n 0)))))))
 
 ;; Now that we have a function to calculate an integral using sympson's rule,
 ;; we need to define the function we'll perform the integral on.  Here we use

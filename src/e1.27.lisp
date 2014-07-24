@@ -50,13 +50,13 @@
 ;; Now we can write a check
 (defun fermat-check (n)
   "Tests if a is congruent to a modulo n for all a < a < 0"
-  (defun try-it (a)
+  (labels ((try-it (a)
     (cond ((<= a 0) T)
           ((= (expmod a n n) a)
            (print (= a (expmod a n n)))
            (try-it (1- a)))
-          (T nil)))
-  (try-it (1- n)))
+          (T nil))))
+  (try-it (1- n))))
 
 ;; First some tests to confirm that everything is working correctly
 ;; For non-prime numbers numbers we would expect this test to fail

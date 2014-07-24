@@ -27,11 +27,11 @@
 ;;
 ;; Using e1.30 as an example we can write our product function
 (defun product (term a next b)
-   (defun iter (a result)
+   (labels ((iter (a result)
      (if (> a b)
        result
-       (iter (funcall next a) (* result (funcall term a)))))
-   (iter a 1))
+       (iter (funcall next a) (* result (funcall term a))))))
+   (iter a 1)))
 
 ;; Next we'll define an incrementer
 (defun inc (n) (+ n 1))
@@ -126,11 +126,11 @@
 ;;  modify it to produce a recursive process as shown below
 ;;  
 (defun recursive-product (term a next b)
-   (defun iter (a)
+   (labels ((iter (a)
      (if (> a b)
        1
-       (* (funcall term a) (iter (funcall next a)))))
-   (iter a)) 
+       (* (funcall term a) (iter (funcall next a))))))
+   (iter a))) 
 
 ;; Finally, using our recursive-product function we can define factorial as follows
 (defun recursive-factorial (x) 

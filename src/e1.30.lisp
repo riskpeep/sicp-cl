@@ -21,11 +21,11 @@
 ;;
 ;; Following the pattern here and re-writing in CL, we arrive at the following definition:
 (defun sum (term a next b)
-  (defun iter (a result)
+  (labels ((iter (a result)
     (if (> a b)
       result
-      (iter (funcall next a) (+ result (funcall term a)))))
-  (iter a 0))
+      (iter (funcall next a) (+ result (funcall term a))))))
+  (iter a 0)))
 
 ;; Following 1.3.1 in the text, we have:
 ;; 
