@@ -45,3 +45,45 @@
 ;  b. If your cont-frac procedure generates a recursive process, write one 
 ;  that generates an iterative process. If it generates an iterative process,
 ;  write one that generates a recursive process.
+
+;; We can create an implementation of cont-frac as follows
+(defun cont-frac (n d k)
+  (if (= k 1)
+    (/ (funcall n k)
+       (funcall d k))
+    (+ (funcall d k) (/ (funcall n k) 
+                        (cont-frac n d (1- k))))))
+
+;; We test cont-frac using the call given in the problem.  We set k = 10.
+;; Note the use of (declare (ignore i)) to suppress an SBCL warning about
+;; the unused variable i.  We leave this declaration out for the remainder
+;; of this exercise for clarity 
+(= 1.6181818 (cont-frac (lambda (i) (declare (ignore i)) 1.0)
+                        (lambda (i) (declare (ignore i)) 1.0)
+                        10))
+
+;; The golden ratio is 1.618033987 (from wikipedia)
+(= 1.6181818 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 10))
+(= 1.6189775 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 11))
+(= 1.6180556 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 12))
+
+;; For k > 12, we obtain a precision of at least 4 decimal places.
+;; 
+;;   b. If your cont-frac procedure generates a recursive process, write one 
+;;   that generates an iterative process. If it generates an iterative process,
+;;   write one that generates a recursive process.
+;;
+(defun cont-frac-iter (n d k)
+  (labels ((iter (n d k accumulator)
+             (if (= k 0)
+               accumulator
+               (iter n d (1- k) (+ (funcall d k) (/ (funcall n k) accumulator))))))
+  (iter n d (1- k) (/ (funcall n k) 
+                   (funcall d k )))))
+
+;; And to test
+(= 1.6181818 (cont-frac-iter (lambda (i) 1.0)
+                             (lambda (i) 1.0)
+                             10))
+(= 1.6180556 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 12))
+
