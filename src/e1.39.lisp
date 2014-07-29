@@ -26,22 +26,11 @@
 (defun cont-frac-enh (n d c k)
   (labels ((iter (n d c k current)
              (if (= k current)
-               (funcall c (funcall d (1- k)) 
-                        (/ (funcall n k)
-                           (funcall d k)))
-               (funcall c (funcall d (1- k))
-                        (/ (funcall n k)
-                           (iter n d c k (1+ current)))))))
-    (/ (funcall n 1) (iter n d c k 2))))
-
-(defun cont-frac-enh (n d c k)
-  (labels ((iter (n d c k current)
-             (if (= k current)
-               (funcall c (funcall d (1- k)) 
-                        (/ (funcall n k)
-                           (funcall d k)))
-               (funcall c (funcall d (1- k))
-                        (/ (funcall n k)
+               (funcall c (funcall d (1- current)) 
+                        (/ (funcall n current)
+                           (funcall d current)))
+               (funcall c (funcall d (1- current))
+                        (/ (funcall n current)
                            (iter n d c k (1+ current)))))))
     (/ (funcall n 1) (iter n d c k 2))))
 
@@ -51,6 +40,9 @@
 ;; Ni = x² for all i > 1, and x for i = 1
 ;; Di = (2 * i) - 1 for all i
 ;;
+(defun di-term (i) 
+  (- (* 2 i) 1))
+
 (defun tan-cf (x k) 
   (labels ((ni-term (i)
              (if (= i 1)
@@ -63,5 +55,10 @@
                    #'-
                    k)))
 
-(tan-cf 1.0 10)
+;; And to test
+;; CL has a TAN function that takes radians as well, so we can use it to check
+;; our work.
+;; 
+;; (tan 1.0) = 1.574077
+(= 1.5574079 (tan-cf 1.0 6))
 
