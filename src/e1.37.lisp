@@ -11,7 +11,7 @@
 ;                     D₃ + ...
 ;
 ;  As an example, one can show that the infinite continued fraction expansion 
-;  with the Ni and the Di all equal to 1 produces 1=ϕ, where ϕ is the golden
+;  with the Ni and the Di all equal to 1 produces 1/ϕ, where ϕ is the golden
 ;  ratio (described in Section 1.2.2). One way to approximate an infinite 
 ;  continued fraction is to truncate the expansion after a given number of 
 ;  terms. Such a truncation — a so-called k-term finite continued fraction
@@ -33,7 +33,7 @@
 ;
 ;  computes the value of the k-term finite continued fraction.
 ;
-;  Check your procedure by approximating 1=ϕ using
+;  Check your procedure by approximating 1/ϕ using
 ;
 ;  (cont-frac (lambda (i) 1.0)
 ;             (lambda (i) 1.0)
@@ -48,26 +48,34 @@
 
 ;; We can create an implementation of cont-frac as follows
 (defun cont-frac (n d k)
-  (if (= k 1)
-    (/ (funcall n k)
-       (funcall d k))
-    (+ (funcall d k) (/ (funcall n k) 
-                        (cont-frac n d (1- k))))))
+  (labels ((iter (n d k current)
+             (if (= k current)
+               (+ (funcall d (1- k)) 
+                  (/ (funcall n k)
+                     (funcall d k)))
+               (+ (funcall d (1- k))
+                  (/ (funcall n k)
+                     (iter n d k (1+ current)))))))
+    (/ (funcall n 1) (iter n d k 2))))
 
 ;; We test cont-frac using the call given in the problem.  We set k = 10.
 ;; Note the use of (declare (ignore i)) to suppress an SBCL warning about
 ;; the unused variable i.  We leave this declaration out for the remainder
 ;; of this exercise for clarity 
-(= 1.6181818 (cont-frac (lambda (i) (declare (ignore i)) 1.0)
+(cont-frac (lambda (i) (declare (ignore i)) 1.0)
+           (lambda (i) (declare (ignore i)) 1.0)
+           10)
+
+(= 0.6179775 (cont-frac (lambda (i) (declare (ignore i)) 1.0)
                         (lambda (i) (declare (ignore i)) 1.0)
                         10))
 
 ;; The golden ratio is 1.618033987 (from wikipedia)
-(= 1.6181818 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 10))
-(= 1.6189775 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 11))
-(= 1.6180556 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 12))
+;; 1/ϕ = 1/1.618033987 = 0.618034
+(= 0.6179775 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 10))
+(= 0.6180556 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 11))
 
-;; For k > 12, we obtain a precision of at least 4 decimal places.
+;; For k > 11, we obtain a precision of at least 4 decimal places.
 ;; 
 ;;   b. If your cont-frac procedure generates a recursive process, write one 
 ;;   that generates an iterative process. If it generates an iterative process,
@@ -75,15 +83,14 @@
 ;;
 (defun cont-frac-iter (n d k)
   (labels ((iter (n d k accumulator)
-             (if (= k 0)
-               accumulator
-               (iter n d (1- k) (+ (funcall d k) (/ (funcall n k) accumulator))))))
-  (iter n d (1- k) (/ (funcall n k) 
-                   (funcall d k )))))
+             (if (= k 1)
+               (/ (funcall n k) accumulator)
+               (iter n d (1- k) (+ (funcall d (1- k)) (/ (funcall n k) accumulator))))))
+    (iter n d k (funcall d k))))
 
 ;; And to test
-(= 1.6181818 (cont-frac-iter (lambda (i) 1.0)
+(= 0.6179775 (cont-frac-iter (lambda (i) 1.0)
                              (lambda (i) 1.0)
                              10))
-(= 1.6180556 (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 12))
+(= 0.6180556 (cont-frac-iter (lambda (i) 1.0) (lambda (i) 1.0) 11))
 
