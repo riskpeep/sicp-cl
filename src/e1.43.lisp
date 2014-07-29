@@ -15,3 +15,17 @@
 ;  625
 ;
 ;  Hint: You may find it convenient to use compose from Exercise 1.42.
+
+;; From e1.41, we have compose
+(defun compose (f g)
+  (lambda (x) (funcall f (funcall g x))))
+
+;; We can define our repeated procedure as follows
+(defun repeated (f n)
+  (if (= n 1)
+    f
+    (compose f f)))
+
+;; And we can test it using 1+ and square
+(funcall (repeated #'1+ 5) 1)
+
