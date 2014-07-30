@@ -24,8 +24,8 @@
 (defun repeated (f n)
   (if (= n 1)
     f
-    (compose f f)))
+    (compose f (repeated f (- n 1)))))
 
 ;; And we can test it using 1+ and square
-(funcall (repeated #'1+ 5) 1)
+(= 6 (funcall (repeated #'1+ 5) 1))
 
