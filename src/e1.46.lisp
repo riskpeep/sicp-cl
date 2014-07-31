@@ -15,11 +15,15 @@
 
 ;; We begin by writing iterative-improve
 (defun iterative-improve (good-enoughp improve-guess)
-  (labels ((iteration (guess x) (if (funcall good-enoughp guess x)
+  (labels ((iteration (guess x) (print guess) (if (funcall good-enoughp guess x)
                                      guess
-                                     (iteration (funcall improve-guess guess x) x))))
-    (lambda (x) (iteration (funcall improve-guess 1.0 x) x))))
+                                     (iteration (funcall improve-guess guess) x))))
+    (lambda (x) (iteration (funcall improve-guess 1.0) x))))
 
+;; ;
+;; ;   Rewrite the sqrt procedure of Section 1.1.7 in terms of iterate-improve
+;; ;
+;; 
 ;; To implement sqrt, we need first to define the procedures for good-enough 
 ;; and improve-guesss.  From 1.1.7, we have
 ;; 
@@ -39,18 +43,44 @@
 (defun average (x y)
   (/ (+ x y) 2))
 
-(defun improve (guess x)
-  (average guess (/ x guess))) 
-
 (defun good-enoughp (guess x)
   (< (abs (- (square guess) x)) 0.001))
 
 ;; Now we can implment sqrt
+;; For improve, we implement improve as a single parameter function that 
+;; uses the closure for x to calculate an improved guess
 (defun im-sqrt (x)
-  (funcall (iterative-improve #'good-enoughp #'improve) x))
+  (labels ((improve (guess) (average guess (/ x guess))))
+  (funcall (iterative-improve #'good-enoughp #'improve) x)))
 
 ;; Finally we test our sqrt procedure
 ;; sqrt of 5.0 = 2.23068
 (= 2.2360687 (im-sqrt 5.0))
+
+;; ;
+;; ;   Rewrite the fixed-point procedure of Section 1.3.3 in terms of iterative-
+;; ;   improve
+;; 
+;; To implement fixed-point, we begin by defining a procedure for good-enough 
+;; From 1.3.3 we have
+(defparameter tolerance 0.00001)
+(defun close-enoughp (v1 v2)
+  (< (abs (- v1 v2))
+     tolerance))
+
+;; For improve-guess, the definition depends on the function passed to fixed-
+;; point, so we define that as part of the definition for our im-fixed-point.
+(defun im-fixed-point (f guess)
+  (labels ((next (x) (funcall f x)))
+    (funcall (iterative-improve #'close-enoughp #'next) guess)))
+
+;; Finally, we can test our new function using the golden ratio calculation 
+;; from e1.35:
+;; 
+;; (= 1.6180328  (fixed-point (lambda (x) (+ 1 (/ 1 x)))
+;;                            1.0))
+;;
+;; Re-implementing using our new method yeilds
+(im-fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.0)
 
 
