@@ -79,6 +79,9 @@
 
 ;; Now we can do some testing
 ;; Make some points
+;; Note in CL let* is like let in that it defines named variables, however, 
+;; unlike let, let* enables successive definitions to refer to the results
+;; from previous definitions
 (let* ((point1 (make-point 5 5))
       (point2 (make-point 1 5))
       (point3 (make-point 5 1))
