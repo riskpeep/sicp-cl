@@ -15,9 +15,12 @@
 
 ;; We begin by writing iterative-improve
 (defun iterative-improve (good-enoughp improve-guess)
-  (labels ((iteration (guess x) (print guess) (if (funcall good-enoughp guess x)
-                                     guess
-                                     (iteration (funcall improve-guess guess) x))))
+  (labels ((iteration (guess x) 
+             (print guess)
+             (let ((next (funcall improve-guess guess)))
+               (if (funcall good-enoughp next guess)
+                 guess
+                 (iteration next x)))))
     (lambda (x) (iteration (funcall improve-guess 1.0) x))))
 
 ;; ;
@@ -36,22 +39,34 @@
 ;; (define (good-enough? guess x)
 ;;   (< (abs (- (square guess) x)) 0.001))
 ;;
-;; In CL we get
+;; However, we need a different check for good enough since interative improve
+;; works differently than the 1.1.7 impelementation.  In 1.3.3, we have 
+
+;; (define (close-enough? v1 v2)
+;;   (< (abs (- v1 v2))
+;;      tolerance))
+;;
+;; This method compares new answers with the previous answers and provides a
+;; more general approach to know if we're getting close enough.
+;; 
+;; Implementing in CL we get
 (defun square (x)
   (* x x))
 
-(defun average (x y)
-  (/ (+ x y) 2))
+(defparameter tolerance 0.00001)
+(defun close-enoughp (v1 v2)
+  (< (abs (- v1 v2))
+     tolerance))
 
-(defun good-enoughp (guess x)
-  (< (abs (- (square guess) x)) 0.001))
+(defun average (x y) 
+  (/ (+ x y) 2.0))
 
 ;; Now we can implment sqrt
 ;; For improve, we implement improve as a single parameter function that 
 ;; uses the closure for x to calculate an improved guess
 (defun im-sqrt (x)
   (labels ((improve (guess) (average guess (/ x guess))))
-  (funcall (iterative-improve #'good-enoughp #'improve) x)))
+  (funcall (iterative-improve #'close-enoughp #'improve) x)))
 
 ;; Finally we test our sqrt procedure
 ;; sqrt of 5.0 = 2.23068
@@ -63,10 +78,6 @@
 ;; 
 ;; To implement fixed-point, we begin by defining a procedure for good-enough 
 ;; From 1.3.3 we have
-(defparameter tolerance 0.00001)
-(defun close-enoughp (v1 v2)
-  (< (abs (- v1 v2))
-     tolerance))
 
 ;; For improve-guess, the definition depends on the function passed to fixed-
 ;; point, so we define that as part of the definition for our im-fixed-point.
@@ -81,6 +92,6 @@
 ;;                            1.0))
 ;;
 ;; Re-implementing using our new method yeilds
-(im-fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.0)
+(= 1.6180371 (im-fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.0))
 
 
