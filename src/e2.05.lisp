@@ -28,10 +28,29 @@
   (* (expt 2 a) (expt 3 b)))
 
 (defun my-car (a) 
-  ;; TODO
-  )
+  (labels ((iter (a count)
+             (if (= (rem a 2) 0)
+               (iter (/ a 2) (1+ count))
+               count)))
+    (iter a 0)))
 
 (defun my-cdr (a) 
-  ;; TODO
-  )
+  (labels ((iter (a count)
+             (if (= (rem a 3) 0)
+               (iter (/ a 3) (1+ count))
+               count)))
+    (iter a 0)))
 
+;; Now to test we can create a cons and then prove that we can pull out the
+;; car and cdr
+(= 108 (my-cons 2 3))
+(= 2 (my-car 108))
+(= 3 (my-cdr 108))
+
+(= 81 (my-cons 0 4))
+(= 0 (my-car 81))
+(= 4 (my-cdr 81))
+
+(= 16 (my-cons 4 0))
+(= 4 (my-car 16))
+(= 0 (my-cdr 16))
