@@ -63,6 +63,15 @@
 ;;     (make-interval (min p1 p2 p3 p4)
 ;;                    (max p1 p2 p3 p4))))
 ;;
+;; In CL
+(defun mul-interval (x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+        (p2 (* (lower-bound x) (upper-bound y)))
+        (p3 (* (upper-bound x) (lower-bound y)))
+        (p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+                   (max p1 p2 p3 p4))))
+
 ;; In this case, we see that the procedure calculates 4 potential terms for
 ;; lower and upper bounds of the range.  The reason for this is to accommodate
 ;; for the possibility of negative intervals and the impact they have on 
@@ -85,7 +94,41 @@
 
 ;; The difference between the first and second widths is 15, and the difference
 ;; first and third ranges is just 10, yet the difference between their
-;; corresponding intervals is the same (- 20 lower-bound), and thus one would
+;; corresponding intervals is the same (± 2 lower-bound), and thus one would
 ;; expect that the differences it width would be similarly altered.
 ;; 
+;; For division, we have
+;;
+;; (define (div-interval x y)
+;;   (mul-interval
+;;     x
+;;     (make-interval (/ 1.0 (upper-bound y))
+;;                    (/ 1.0 (lower-bound y)))))
+;;
+;; In CL
+(defun div-interval (x y)
+  (mul-interval
+    x
+    (make-interval (/ 1.0 (upper-bound y))
+                   (/ 1.0 (lower-bound y)))))
+
+;; Division, being a function of interval multiplication, we can expect it to 
+;; express the same problems as the multiplication does.
+;;
+;; We can evaluate some divisions to see that this is true
+;; (div-interval (make-interval 1 10) (make-interval 10 20))
+;; (0.05 . 1.0)
+;; (div-interval (make-interval -1 10) (make-interval 10 20))
+;; (-0.1 . 1.0)
+;; (div-interval (make-interval 2 10) (make-interval 10 20))
+;; (0.1 . 1.0)
 ;; 
+;; In the first scenario, the width is 0.475
+;; In the second scenario, the width is 0.55
+;; In the third scenario, the width is 0.45
+;; 
+;; The difference between the first and second widths is 0.075, and the difference
+;; first and third ranges is just 0.025, yet the difference between their
+;; corresponding intervals is the same (± 1 lower-bound), and thus one would
+;; expect that the differences it width would be similarly altered.
+
