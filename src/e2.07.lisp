@@ -12,5 +12,5 @@
 (defun make-interval (a b) (cons a b))
 
 ;; Next we can write selectors for upper-bound and lower-bound
-(defun lower-bound (a) (cdr a))
-(defun upper-bound (a) (car a))
+(defun lower-bound (a) (car a))
+(defun upper-bound (a) (cdr a))

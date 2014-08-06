@@ -37,9 +37,8 @@
 ;; Next, we examing subtraction.  From e2.08, we have
 ;; 
 ;; (defun sub-interval (minuend subtrahend)
-;;   (let ((largest (- (upper-bound minuend) (lower-bound subtrahend)))
-;;         (smallest (- (lower-bound minuend) (upper-bound subtrahend))))
-;;     (make-interval (max smallest 0) (max largest 0)))
+;;   (make-interval (- (lower-bound minuend) (upper-bound subtrahend))
+;;                  (- (upper-bound minuend) (lower-bound subtrahend))))
 ;;
 ;; Again, we note that the resulting interval can be expressed as follows
 ;;
@@ -64,4 +63,29 @@
 ;;     (make-interval (min p1 p2 p3 p4)
 ;;                    (max p1 p2 p3 p4))))
 ;;
-;; In this case, we see that the 
+;; In this case, we see that the procedure calculates 4 potential terms for
+;; lower and upper bounds of the range.  The reason for this is to accommodate
+;; for the possibility of negative intervals and the impact they have on 
+;; multiplication.  One huge ramification of this is that multiplying 
+;; comparatively similar intervals when one interval has negative range has
+;; a larger effect that expected on the resulting intervals width.
+;; 
+;; The easiest way to see this effect is by example
+;; 
+;; CL-USER> (mul-interval (make-interval 1 10) (make-interval 10 20))
+;; (10 . 200)
+;; CL-USER> (mul-interval (make-interval -1 10) (make-interval 10 20))
+;; (-20 . 200)
+;; CL-USER> (mul-interval (make-interval 3 10) (make-interval 10 20))
+;; (30 . 200)
+
+;; In the first scenario, the width is 95
+;; In the second scenario, the width is 110
+;; In the third scenario, the width is 85
+
+;; The difference between the first and second widths is 15, and the difference
+;; first and third ranges is just 10, yet the difference between their
+;; corresponding intervals is the same (- 20 lower-bound), and thus one would
+;; expect that the differences it width would be similarly altered.
+;; 
+;; 
