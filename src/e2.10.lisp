@@ -31,12 +31,15 @@
 ;; lower bounds of the divisor differ.  If they do, we return nil to signal
 ;; an error
 ;; 
+;; Note the CL functions minusp and plusp check to see if their arguments are
+;; less-than or greater-than zero respectively
+;; 
 (defun div-interval (x y)
   (cond ( ; Does the divisor span zero?
-         (or (and (< 0 (lower-bound y))
-                  (> 0 (upper-bound y)))
-             (and (> 0 (lower-bound y))
-                  (< 0 (upper-bound y))))
+         (or (and (plusp  (lower-bound y))
+                  (minusp (upper-bound y)))
+             (and (minusp (lower-bound y))
+                  (plusp  (upper-bound y))))
          nil)
         (T (mul-interval
              x
