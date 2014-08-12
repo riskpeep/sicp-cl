@@ -5,3 +5,18 @@
 ;
 ;  (last-pair (list 23 72 149 34))
 ;  (34)
+
+;; The last cons pair will have nil as its cdr, so we can just walk the list
+;; looking for a cdr of NIL and return that cons
+(defun last-pair (list)
+  (if (eql (cdr list) nil)
+    list
+    (last-pair (cdr list))))
+
+;; Tests
+(last-pair (list 23 72 149 34))
+;; (34)
+(last-pair (list 23))
+;; (23)
+(last-pair nil)
+;; NIL
