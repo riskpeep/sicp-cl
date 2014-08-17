@@ -16,3 +16,26 @@
 ;      
 ;  (define (square-list items)
 ;    (map <??> <??>))
+
+;; We begin with the first definition.  In this definition, the blanks must
+;; be used to build the result list.  We do this by recursively adding the
+;; square of the current item to the list created by the result from the
+;; square-list of the remainder of the items list.
+(defun square-list (items)
+  (if (null items)
+    nil
+    (cons (* (car items) (car items)) (square-list (cdr items)))))
+
+;; Testing
+(square-list (list 1 2 3 4))
+;; (1 4 9 16)
+;; 
+;; The second implementation is much simpler, since it uses the higher order 
+;; procedure map.  Note that in common lisp, we must define the result type
+;; in addition to the procedure and the sequence
+(defun square-list2 (items)
+  (map 'list (lambda (x) (* x x)) items))
+
+;; Testing
+(square-list2 (list 1 2 3 4))
+;; (1 4 9 16)
