@@ -13,3 +13,25 @@
 ;  ((3 4) (1 2))
 ;  (deep-reverse x)
 ;  ((4 3) (2 1))
+
+;; From e2.18, we have
+;; 
+(defun my-reverse (list)
+  (labels ((iter (list result)
+             (if (eq list nil)
+               nil
+               (if (eq (cdr list) nil)
+                 (cons (car list) result)
+                 (iter (cdr list) (cons (car list) result))))))
+    (iter list nil)) 
+;;
+;; We modify this procedure by checking to see if the car is a list
+(defun my-reverse (list)
+  (labels ((iter (list result)
+             (if (eq list nil)
+               nil
+               (if (eq (cdr list) nil)
+                 (cons (car list) result)
+                 (iter (cdr list) (cons (car list) result))))))
+    (iter list nil)) 
+
