@@ -23,15 +23,21 @@
                (if (eq (cdr list) nil)
                  (cons (car list) result)
                  (iter (cdr list) (cons (car list) result))))))
-    (iter list nil)) 
+    (iter list nil)))
 ;;
-;; We modify this procedure by checking to see if the car is a list
-(defun my-reverse (list)
+;; We modify this procedure by attempting to iterate on the car as well as on
+;; the cdr if the car is a list.
+(defun deep-reverse (list)
   (labels ((iter (list result)
              (if (eq list nil)
                nil
                (if (eq (cdr list) nil)
-                 (cons (car list) result)
+                 (cons (iter (car list) nil) result)
                  (iter (cdr list) (cons (car list) result))))))
-    (iter list nil)) 
+    (iter list nil)))
+
+;; Testing
+(defparameter x (list (list 1 2) (list 3 4)))
+
+(deep-reverse x)
 
