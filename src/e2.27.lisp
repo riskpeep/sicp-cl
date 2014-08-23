@@ -26,18 +26,23 @@
     (iter list nil)))
 ;;
 ;; We modify this procedure by attempting to iterate on the car as well as on
-;; the cdr if the car is a list.
+;; the cdr if the car is a pair.  Note the CL equivalent to pair? is consp.
 (defun deep-reverse (list)
   (labels ((iter (list result)
              (if (eq list nil)
                nil
-               (if (eq (cdr list) nil)
-                 (cons (iter (car list) nil) result)
-                 (iter (cdr list) (cons (car list) result))))))
+               (let ((car-val (cond
+                                ((consp (car list))
+                                 (iter (car list) nil))
+                                (T
+                                 (car list)))))
+                 (if (eq (cdr list) nil)
+                   (cons car-val result)
+                   (iter (cdr list) (cons car-val result)))))))
     (iter list nil)))
 
 ;; Testing
 (defparameter x (list (list 1 2) (list 3 4)))
 
 (deep-reverse x)
-
+;; ((4 3) (2 1))
