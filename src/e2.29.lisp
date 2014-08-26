@@ -63,33 +63,113 @@
 (defparameter a (make-mobile (make-branch 1 1) (make-branch 1 (make-mobile (make-branch 1 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 1 4)))))
 (defparameter b (make-mobile (make-branch 1 1) (make-branch 1 4)))
 (left-branch a)
+;; (1 1)
 (right-branch a)
+;; (1 ((1 ((1 2) (1 2))) (1 4)))
 
-(branch-length (left-branch a))
-(branch-structure (left-branch a))
+(= 1 (branch-length (left-branch a)))
+(= 1 (branch-structure (left-branch a)))
 
-(branch-length (left-branch (branch-structure (right-branch a))))
+(= 1 (branch-length (left-branch (branch-structure (right-branch a)))))
 (branch-structure (left-branch (branch-structure  (right-branch a))))
+;; ((1 2) (1 2))
 
 ;; B.
 ;; For total weight, we need a procedure that walks a tree structure and 
 ;; performs an operation to accumulate the weight on the branches.
-(defun total-weight (mobile)
-  (labels ((iter (mobile accumulated-weight)
-             (cond ((null mobile) accumulated-weight)
-                   ((not (consp mobile)) (+ accumulated-weight (branch-structure mobile)))
-                   (T (iter (left-branch mobile)
-                            (iter (right-branch mobile) accumulated-weight))))))  
-    (iter mobile nil)))
+;; 
+;; First, a simple check to see if we're dealing with a sub-mobile, or just a
+;; weight.
+(defun mobilep (mobile)
+  (consp mobile))
 
 (defun total-weight (mobile)
-  (+ (if (not (consp (branch-structure (left-branch mobile))))
-       (branch-structure (left-branch mobile))
-       (total-weight (branch-structure (left-branch mobile))))
-     (if (not (consp (branch-structure (right-branch mobile))))
-       (branch-structure (right-branch mobile))
-       (total-weight (branch-structure (right-branch mobile))))))
+  (if (not (consp mobile))
+    ; Simple structure, we can just return it as the weight
+    mobile
+    ; Complex structure, need to calculate it
+    (+ (if (not (mobilep (branch-structure (left-branch mobile))))
+         (branch-structure (left-branch mobile))
+         (total-weight (branch-structure (left-branch mobile))))
+       (if (not (mobilep (branch-structure (right-branch mobile))))
+         (branch-structure (right-branch mobile))
+         (total-weight (branch-structure (right-branch mobile)))))))
 
 ;; Testing
 (= 9  (total-weight a))
 (= 5  (total-weight b))
+
+;; C.
+;; Implementation of this method builds on the total weight method defined
+;; above.
+(defun balancedp (mobile)
+  (if (and (= (* (branch-length (left-branch mobile))
+                 (total-weight (branch-structure (left-branch mobile))))
+              (* (branch-length (right-branch mobile))
+                 (total-weight (branch-structure (right-branch mobile)))))
+           (if (mobilep (branch-structure (left-branch mobile)))
+             (balancedp (branch-structure (left-branch mobile)))
+             T)
+           (if (mobilep (branch-structure (right-branch mobile)))
+             (balancedp (branch-structure (right-branch mobile)))
+             T))
+    T
+    nil))
+
+;; Testing
+(defparameter balanced-simple (make-mobile (make-branch 2 2) (make-branch 1 4)))
+(defparameter balanced-complex (make-mobile (make-branch 2 4) (make-branch 1 (make-mobile (make-branch 2 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 2 4)))))
+(defparameter unbalanced-simple (make-mobile (make-branch 1 3) (make-branch 1 4)))
+(defparameter unbalanced-complex (make-mobile (make-branch 4 5) (make-branch 1 (make-mobile (make-branch 2 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 1 4)))))
+
+(eq T   (balancedp balanced-simple))
+(eq T   (balancedp balanced-complex))
+(eq nil (balancedp unbalanced-simple))
+(eq nil (balancedp unbalanced-complex))
+
+;; D.
+;; We would expect to need to change only the selectors in order to extract
+;; the correct item from the new structure.  Specifically, we should need
+;; to change only the selectors right-branch and branch-structure 
+;; 
+;; To demonstrate, we can re-define the constructors in CL as follows.
+(defun make-mobile (left right)
+  (cons left right))
+(defun make-branch (length structure)
+  (cons length structure))
+
+;; And define new selectors
+(defun right-branch (mobile)
+  (cdr mobile))                   ; Can use just cdr since it isn't a list
+(defun branch-structure (branch)
+  (cdr branch))                  ; Can use just cdr since it isn't a list
+
+;; We can validate our changes by re-evaluating several of our earlier tests.
+;; First we re-create our test lists
+(defparameter a (make-mobile (make-branch 1 1) (make-branch 1 (make-mobile (make-branch 1 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 1 4)))))
+(defparameter b (make-mobile (make-branch 1 1) (make-branch 1 4)))
+
+;; We can show that the selectors work as follows
+(right-branch a)
+;; (1 (1 (1 . 2) 1 . 2) 1 . 4)))
+
+(= 1 (branch-length (left-branch (branch-structure (right-branch a)))))
+(branch-structure (left-branch (branch-structure  (right-branch a))))
+;; ((1 . 2) 1 . 2))
+
+;; And our total-weight 
+(= 9  (total-weight a))
+(= 5  (total-weight b))
+
+;; And finally our balancedp tests
+(defparameter balanced-simple (make-mobile (make-branch 2 2) (make-branch 1 4)))
+(defparameter balanced-complex (make-mobile (make-branch 2 4) (make-branch 1 (make-mobile (make-branch 2 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 2 4)))))
+(defparameter unbalanced-simple (make-mobile (make-branch 1 3) (make-branch 1 4)))
+(defparameter unbalanced-complex (make-mobile (make-branch 4 5) (make-branch 1 (make-mobile (make-branch 2 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 1 4)))))
+
+(eq T   (balancedp balanced-simple))
+(eq T   (balancedp balanced-complex))
+(eq nil (balancedp unbalanced-simple))
+(eq nil (balancedp unbalanced-complex))
+
+
