@@ -123,6 +123,10 @@
           )))
 
 ;; Testing
+;; 
+;; Note that in CL, we can use the predicate equal to verify equality for
+;; lists and other complex types.
+;;
 ;; 1. All bounds > 0,
 (equal '(5 . 50) (mul-interval (make-interval 1 5) (make-interval 5 10)))
 
