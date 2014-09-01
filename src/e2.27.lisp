@@ -44,5 +44,4 @@
 ;; Testing
 (defparameter x (list (list 1 2) (list 3 4)))
 
-(deep-reverse x)
-;; ((4 3) (2 1))
+(equal '((4 3) (2 1)) (deep-reverse x))

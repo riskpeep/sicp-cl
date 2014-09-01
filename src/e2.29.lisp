@@ -62,17 +62,15 @@
 ;; Testing
 (defparameter a (make-mobile (make-branch 1 1) (make-branch 1 (make-mobile (make-branch 1 (make-mobile (make-branch 1 2) (make-branch 1 2))) (make-branch 1 4)))))
 (defparameter b (make-mobile (make-branch 1 1) (make-branch 1 4)))
-(left-branch a)
-;; (1 1)
-(right-branch a)
-;; (1 ((1 ((1 2) (1 2))) (1 4)))
+(equal '(1 1) (left-branch a))
+
+(equal '(1 ((1 ((1 2) (1 2))) (1 4))) (right-branch a))
 
 (= 1 (branch-length (left-branch a)))
 (= 1 (branch-structure (left-branch a)))
 
 (= 1 (branch-length (left-branch (branch-structure (right-branch a)))))
-(branch-structure (left-branch (branch-structure  (right-branch a))))
-;; ((1 2) (1 2))
+(equal '((1 2) (1 2)) (branch-structure (left-branch (branch-structure  (right-branch a)))))
 
 ;; B.
 ;; For total weight, we need a procedure that walks a tree structure and 
@@ -150,12 +148,10 @@
 (defparameter b (make-mobile (make-branch 1 1) (make-branch 1 4)))
 
 ;; We can show that the selectors work as follows
-(right-branch a)
-;; (1 (1 (1 . 2) 1 . 2) 1 . 4)))
+(equal '(1 (1 (1 . 2) 1 . 2) 1 . 4) (right-branch a))
 
 (= 1 (branch-length (left-branch (branch-structure (right-branch a)))))
-(branch-structure (left-branch (branch-structure  (right-branch a))))
-;; ((1 . 2) 1 . 2))
+(equal '((1 . 2) 1 . 2) (branch-structure (left-branch (branch-structure  (right-branch a)))))
 
 ;; And our total-weight 
 (= 9  (total-weight a))

@@ -28,10 +28,11 @@
         (T
          (cons (square-tree (car tree)) (square-tree (cdr tree))))))
 
-(square-tree
+(equal '(1 (4 (9 16) 25) (36 49))
+  (square-tree
     (list 1
           (list 2 (list 3 4) 5)
-          (list 6 7)))
+          (list 6 7))))
 ;;  (1 (4 (9 16) 25) (36 49))
 
 ;; Using map and recursion, we proceed as follows
@@ -43,11 +44,11 @@
         (T
          (map 'list #'square-tree2 tree))))
 
-(square-tree2
+(equal '(1 (4 (9 16) 25) (36 49))
+  (square-tree2
     (list 1
           (list 2 (list 3 4) 5)
-          (list 6 7)))
-;;  (1 (4 (9 16) 25) (36 49))
+          (list 6 7))))
 
 ;; The solution presented above is unsatisfying as it doesn't really leverage
 ;; map in a powerful way.

@@ -43,8 +43,7 @@
   (iter items nil)))
 
 ;; Next we test it
-(square-list (list 1 2 3 4))
-;; (16 9 4 1)
+(equal '(16 9 4 1) (square-list (list 1 2 3 4)))
 ;; 
 ;; We see that the result is indeed reversed.  We can use substitution to 
 ;; understand why.
@@ -74,8 +73,7 @@
     (iter items nil)))
 
 ;; Next we test it
-(square-list-alt (list 1 2 3 4))
-;; ((((NIL. 1) . 4) . 9) . 16)
+(equal '((((NIL . 1) . 4) . 9) . 16) (square-list-alt (list 1 2 3 4)))
 ;;
 ;; We see that the result is now in the proper order, but instead of a list
 ;; as expected, we have a collection of cons cells.  Since the only change

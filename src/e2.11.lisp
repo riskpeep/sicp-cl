@@ -124,37 +124,28 @@
 
 ;; Testing
 ;; 1. All bounds > 0,
-(mul-interval (make-interval 1 5) (make-interval 5 10))
-;; (5 . 50)
+(equal '(5 . 50) (mul-interval (make-interval 1 5) (make-interval 5 10)))
 
 ;; 2. lower-bound x < 0, all other bounds > 0,
-(mul-interval (make-interval -1 5) (make-interval 5 10))
-;; (-5 . 50)
+(equal '(-5 . 50) (mul-interval (make-interval -1 5) (make-interval 5 10)))
 
 ;; 3. lower-bound y < 0, all other bounds > 0,
-(mul-interval (make-interval 1 5) (make-interval -5 10))
-;; (-5 . 50)
+(equal '(-5 . 50) (mul-interval (make-interval 1 5) (make-interval -5 10)))
 
 ;; 4. both lower-bounds < 0, all other bounds > 0,
-(mul-interval (make-interval -1 5) (make-interval -5 10))
-;; (5 . 50)
+(equal '(5 . 50) (mul-interval (make-interval -1 5) (make-interval -5 10)))
 
 ;; 5. both x bounds < 0, both y bounds > 0,
-(mul-interval (make-interval -5 -1) (make-interval 5 10))
-;; (-50 . -5)
+(equal '(-50 . -5) (mul-interval (make-interval -5 -1) (make-interval 5 10)))
 
 ;; 6. both y bounds < 0, both x bounds > 0,
-(mul-interval (make-interval 1 5) (make-interval -10 -5))
-;; (-50 . -5)
+(equal '(-50 . -5) (mul-interval (make-interval 1 5) (make-interval -10 -5)))
 
 ;; 7. both x bounds, and lower-y bound < 0,
-(mul-interval (make-interval -5 -1) (make-interval -5 10))
-;; (-10 . 25)
+(equal '(-10 . 25) (mul-interval (make-interval -5 -1) (make-interval -5 10)))
 
 ;; 8. both y bounds, and lower-x bound < 0, and
-(mul-interval (make-interval -1 5) (make-interval -10 -5))
-;; (-25 . 10)
+(equal '(-25 . 10) (mul-interval (make-interval -1 5) (make-interval -10 -5)))
 
 ;; 9. All bounds < 0.
-(mul-interval (make-interval -5 -1) (make-interval -10 -5))
-;; (50 . 5)
+(equal '(5 . 50) (mul-interval (make-interval -5 -1) (make-interval -10 -5)))

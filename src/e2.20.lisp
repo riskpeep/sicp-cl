@@ -79,11 +79,9 @@
       (cons initial (iter #'oddp values)))))
 
 ;; Test
-(same-parity 1 2 3 4 5 6 7)
-;;  (1 3 5 7)
+(equal '(1 3 5 7) (same-parity 1 2 3 4 5 6 7))
 ;;
-(same-parity 2 3 4 5 6 7)
-;;  (2 4 6)
+(equal '(2 4 6) (same-parity 2 3 4 5 6 7))
 
 ;; Below, we provide an alternate implementation that is tail call optimized.
 ;; It returns its results in reverse order.  The problem statement does not
@@ -105,11 +103,9 @@
       (iter #'oddp values (list initial)))))
 
 ;; Testing same-parity-alt
-(same-parity-alt 1 2 3 4 5 6 7)
-;;  (1 3 5 7)
+(equal '(7 5 3 1) (same-parity-alt 1 2 3 4 5 6 7))
 
-(same-parity-alt 2 3 4 5 6 7 8)
-;;  (2 4 6)
+(equal '(8 6 4 2) (same-parity-alt 2 3 4 5 6 7 8))
 
 ;; As a final note, CL provides a number of list manipulation functions 
 ;; including REMOVE-IF, that would make the implementation of this procedure
@@ -121,6 +117,4 @@
       (cons initial (remove-if-not #'evenp values))
       (cons initial (remove-if-not #'oddp values))))
 
-(same-parity-alt2 1 2 3 4 5 6 7)
-;; (1 3 5 7)
-;;
+(equal '(1 3 5 7) (same-parity-alt2 1 2 3 4 5 6 7))

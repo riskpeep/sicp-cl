@@ -14,9 +14,8 @@
     (last-pair (cdr list))))
 
 ;; Tests
-(last-pair (list 23 72 149 34))
-;; (34)
-(last-pair (list 23))
-;; (23)
-(last-pair nil)
-;; NIL
+(equal '(34) (last-pair (list 23 72 149 34)))
+
+(equal '(23) (last-pair (list 23)))
+
+(equal nil (last-pair nil))

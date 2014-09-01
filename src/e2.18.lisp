@@ -18,9 +18,9 @@
     (iter list nil)))
 
 ;; Testing
-(my-reverse (list 1 4 9 16 25))
-;; (25 16 9 4 1)
-(my-reverse (list 23))
-;; (23)
-(my-reverse nil)
+(equal '(25 16 9 4 1) (my-reverse (list 1 4 9 16 25)))
+
+(equal '(23) (my-reverse (list 23)))
+
+(equal nil (my-reverse nil))
 ;; NIL

@@ -9,8 +9,7 @@
 ;  (as in Figure 2.6).
 
 ;; The first answer is easiest, we just feed the expression to the interpreter.
-(list 1 (list 2 (list 3 4)))
-;; (1 (2 (3 4)))
+(equal '(1 (2 (3 4))) (list 1 (list 2 (list 3 4))))
 
 ;; In box and pointer notation, we have the following
 ;;  ___ ___      ___ ___

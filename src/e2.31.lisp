@@ -41,9 +41,9 @@
   (tree-map #'square tree))
 
 ;; To test, we use the same tree defined in e2.30
-(square-tree-3
+(equal '(1 (4 (9 16) 25) (36 49))
+  (square-tree-3
     (list 1
           (list 2 (list 3 4) 5)
-          (list 6 7)))
-;;  (1 (4 (9 16) 25) (36 49))
+          (list 6 7))))
 

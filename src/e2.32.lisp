@@ -27,8 +27,9 @@
       (append rest (map 'list (lambda (x) (cons (car s) x)) rest)))))
 
 ;; Testing
-(subsets (list 1 2 3))
-;; (NIL (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))
+(equal '(NIL (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))
+  (subsets (list 1 2 3)))
+
 ;; Note that in CL, the empty list is equivalent to nil
 ;; 
 ;; Now, we discuss why it works.  To begin, we look at the output from trace

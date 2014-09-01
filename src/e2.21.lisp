@@ -27,8 +27,7 @@
     (cons (* (car items) (car items)) (square-list (cdr items)))))
 
 ;; Testing
-(square-list (list 1 2 3 4))
-;; (1 4 9 16)
+(equal '(1 4 9 16) (square-list (list 1 2 3 4)))
 ;; 
 ;; The second implementation is much simpler, since it uses the higher order 
 ;; procedure map.  Note that in common lisp, we must define the result type
@@ -37,5 +36,4 @@
   (map 'list (lambda (x) (* x x)) items))
 
 ;; Testing
-(square-list2 (list 1 2 3 4))
-;; (1 4 9 16)
+(equal '(1 4 9 16) (square-list2 (list 1 2 3 4)))

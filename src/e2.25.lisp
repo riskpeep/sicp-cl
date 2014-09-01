@@ -21,14 +21,14 @@ C
 ;;  (1 (2 (3 (4 (5 (6 7))))))
 
 ;; Now we may begin extracting the 7s.  We begin with the first list
-(car (cdr (car (cdr (cdr a)))))
+(= 7 (car (cdr (car (cdr (cdr a))))))
 ;; 7
 
 ;; An the second
-(car (car b))
+(= 7 (car (car b)))
 
 ;; Finally the third
-(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr c))))))))))))
+(= 7 (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr c)))))))))))))
 
 ;; Note that since cdr returns a list, a common pattern is cdr followed
 ;; by car.  CL provides a maens to simplify these in the cadr method.  Thus
@@ -36,8 +36,8 @@ C
 ;; as follows:
 ;; 
 ;; First
-(cadr (cadr (cdr a)))
+(= 7 (cadr (cadr (cdr a))))
 
 ;; Third
-(cadr (cadr (cadr (cadr (cadr (cadr c))))))
+(= 7 (cadr (cadr (cadr (cadr (cadr (cadr c)))))))
 
