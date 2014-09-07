@@ -15,5 +15,27 @@
 ;  (define (accumulate-n op init seqs)
 ;    (if (null? (car seqs))
 ;      nil
-;      (cons (accumulate op init ⟨??⟩)
-;            (accumulate-n op init ⟨??⟩))))
+;      (cons (accumulate op init <??>)
+;            (accumulate-n op init <??>))))
+
+;; Before we begin, we bring in accumulate
+(defun accumulate (op initial sequence)
+  (if (null sequence)
+    initial
+    (funcall op (car sequence)
+                (accumulate op initial (cdr sequence)))))
+
+;; Now we may proceed with the definition of accumulate-n.  For the two
+;; missing expressions, the first should return a list of the cars of each
+;; list in the seqs parameter.  The second should return a new seqs that has
+;; the cdr of each list in seqs.
+(defun accumulate-n (op init seqs)
+  (if (null (car seqs))
+    nil
+    (cons (accumulate op init (map 'list #'car seqs))
+          (accumulate-n op init (map 'list #'cdr seqs)))))
+
+;; Test
+(defparameter s (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
+
+(equal '(22 26 30) (accumulate-n #'+ 0 s))
