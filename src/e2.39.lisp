@@ -28,7 +28,8 @@
 
 ;; Now may begin
 (defun my-reverse (sequence)
-  (fold-right (lambda (x y) (cons x y)) nil sequence))
+  (fold-right (lambda (x y) (cons y (list  x))) nil sequence))
+  (accumulate #'cons seq2 seq1) 
 
 (defun my-reverse2 (sequence)
   (fold-left (lambda (x y) (cons y x)) nil sequence))
