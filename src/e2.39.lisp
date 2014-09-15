@@ -27,14 +27,14 @@
   (accumulate op initial sequence))
 
 ;; Now may begin
+;; For fold-right, we use the implementation of append from e2.33
 (defun my-reverse (sequence)
-  (fold-right (lambda (x y) (cons y (list  x))) nil sequence))
-  (accumulate #'cons seq2 seq1) 
+  (fold-right (lambda (x y) (accumulate #'cons (list x) y)) nil sequence))
 
+;; Fold-left can be implemented directly using cons
 (defun my-reverse2 (sequence)
   (fold-left (lambda (x y) (cons y x)) nil sequence))
 
 ;; Testing
-(my-reverse (list 1 2 3))
-(my-reverse2 (list 1 2 3))
-
+(equal '(3 2 1) (my-reverse (list 1 2 3)))
+(equal '(3 2 1) (my-reverse2 (list 1 2 3)))
