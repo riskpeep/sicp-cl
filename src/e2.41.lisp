@@ -22,19 +22,22 @@
 (defun flatmap (proc seq)
   (accumulate #'append nil (map 'list proc seq)))
 
-(flatmap #'append (enumerate-interval 1 4))
-
-
 ;; For our sequence generator, we need all distinct triples, not just those
-;; where 1 ≤ k ≤ j ≤ i ≤ n.  So we use a simplified enumerate-interval call.
+;; where 1 ≤ k < j < i ≤ n.  So we use a simplified enumerate-interval call.
 (defun unique-triples (n)
-  (accumulate
-    #'append nil (map 'list (lambda (i)
-                              (map 'list (lambda (j)
-                                           (map 'list (lambda (k) (list i j k))
-                                                (enumerate-interval 1 n)))
-                                   (enumerate-interval 1 n)))
-                      (enumerate-interval 1 n))))
+  (accumulate #'append nil (map 'list (lambda (i) 
+                                        (accumulate #'append nil  (map 'list (lambda (j)
+                                                                               (map 'list (lambda (k) (list i j k))
+                                                                                    (enumerate-interval 1 n)))
+                                                                       (enumerate-interval 1 n))))
+                                (enumerate-interval 1 n))))
+
+;; Testing unique-triples
+(equal '((1 1 1) (1 1 2) (1 1 3) (1 2 1) (1 2 2) (1 2 3)
+ (1 3 1) (1 3 2) (1 3 3) (2 1 1) (2 1 2) (2 1 3)
+ (2 2 1) (2 2 2) (2 2 3) (2 3 1) (2 3 2) (2 3 3)
+ (3 1 1) (3 1 2) (3 1 3) (3 2 1) (3 2 2) (3 2 3)
+ (3 3 1) (3 3 2) (3 3 3)) (unique-triples 3))
 
 ;; Bring in filter
 (defun filter (predicate sequence)

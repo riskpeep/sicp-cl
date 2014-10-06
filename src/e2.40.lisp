@@ -39,6 +39,7 @@
 ;; Testing
 (equal '((2 1)) (unique-pairs 2))
 (equal '((2 1) (3 1) (3 2)) (unique-pairs 3))
+(equal '((2 1) (3 1) (3 2) (4 1) (4 2) (4 3)) (unique-pairs 4))
 
 ;; To simplify prime-sum-pairs, we must replace the sequence generating 
 ;; portion of the prime-sum-pairs procedure.
