@@ -46,3 +46,37 @@
 ;  in the kth column is safe with respect to the others. (Note that we need 
 ;  only check whether the new queen is safe — the other queens are already 
 ;  guaranteed safe with respect to each other.)
+
+;; 
+(defun adjoinposition (new-row k positions)
+  "Adjoins a new row-column position to a set of positions"
+  (append (list new-row k) positions)) 
+
+(defun empty-board ()
+  "Represents a set of empty positions"
+  nil) 
+
+(defun safe? (k positions)
+  "Determines for a set of positions, whether the queen in the kth column is safe with respect to the others. (Note that we need only check whether the new queen is safe — the other queens are already guaranteed safe with respect to each other.)"
+  (and (not (accumulate #'or nil (map 'list (lambda (x) (not (= (car (nth k positions)) (car x)))) positions)))
+       (not (accumulate #'or nil (map 'list (lambda (x) (not (= (cdr (nth k positions))) (cdr x))) positions)))
+       ;; TODO check the diagonals
+
+  ))
+
+;; Finally, we can re-write the given procedure in CL
+(defun queens (board-size
+  (labels ((queen-cols (k)
+             (if (= k 0)
+               (list empty-board)
+               (filter
+                 (lambda (positions) (safe? k positions))
+                 (flatmap
+                   (lambda (rest-of-queens)
+                     (map (lambda (new-row)
+                            (adjoin-position
+                              new-row k rest-of-queens))
+                          (enumerate-interval 1 board-size)))
+                   (queen-cols (- k 1)))))))
+    (queen-cols board-size))))
+

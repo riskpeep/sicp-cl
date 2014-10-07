@@ -55,6 +55,7 @@
     (map 'list (lambda (x) x)
          (filter #'triple-sum-s-p (unique-triples n)))))
 
-(triple-sum-triples 4 4)
+;; Test
+(equal '((1 1 2) (1 2 1) (2 1 1)) (triple-sum-triples 4 4))
 
 
