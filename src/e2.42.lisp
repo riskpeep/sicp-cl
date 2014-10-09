@@ -47,25 +47,60 @@
 ;  only check whether the new queen is safe — the other queens are already 
 ;  guaranteed safe with respect to each other.)
 
-;; 
-(defun adjoinposition (new-row k positions)
-  "Adjoins a new row-column position to a set of positions"
-  (append (list new-row k) positions)) 
+;; First we bring in some methods we'll need
+(defun accumulate (op initial sequence)
+  (if (null sequence)
+    initial
+    (funcall op (car sequence)
+                (accumulate op initial (cdr sequence)))))
+(defun filter (predicate sequence)
+  (cond ((null sequence) nil)
+        ((funcall predicate (car sequence))
+         (cons (car sequence)
+               (filter predicate (cdr sequence))))
+        (T (filter predicate (cdr sequence)))))
+(defun flatmap (proc seq)
+  (accumulate #'append nil (map 'list proc seq)))
+(defun enumerate-interval (low high)
+  (if (> low high)
+    nil
+    (cons low (enumerate-interval (+ low 1) high))))
 
-(defun empty-board ()
-  "Represents a set of empty positions"
-  nil) 
+
+
+;; 
+(defun adjoin-position (new-row k positions)
+  "Adjoins a new row-column position to a set of positions"
+  (cons (list new-row k) positions)) 
+
+(defparameter empty-board nil)
+;;(defun empty-board ()
+;;  "Represents a set of empty positions"
+;;  nil) 
 
 (defun safe? (k positions)
   "Determines for a set of positions, whether the queen in the kth column is safe with respect to the others. (Note that we need only check whether the new queen is safe — the other queens are already guaranteed safe with respect to each other.)"
-  (and (not (accumulate #'or nil (map 'list (lambda (x) (not (= (car (nth k positions)) (car x)))) positions)))
-       (not (accumulate #'or nil (map 'list (lambda (x) (not (= (cdr (nth k positions))) (cdr x))) positions)))
-       ;; TODO check the diagonals
-
-  ))
+  (and 
+    ;; Check that there is only one queen in this column
+    (= 1 (accumulate #'+ 0 
+                        (map 'list 
+                             (lambda (x) (if (= (cadr x) k)
+                                            1
+                                            0)) positions))))
+    (= 1 (accumulate #'+ 0 
+                        (map 'list 
+                             (lambda (x) (if (= (cadr x) k)
+                                            1
+                                            0)) 
+                             (filter (lambda (x) (= (cadr x) k)) positions)))) 
+    ;; TODO check the row
+    ;; TODO check the diagonals
+;;       (not (accumulate #'or nil (map 'list (lambda (x) (not (= (cdr (nth k positions)) (cdr x)))) positions)))
+;;
+)
 
 ;; Finally, we can re-write the given procedure in CL
-(defun queens (board-size
+(defun queens (board-size)
   (labels ((queen-cols (k)
              (if (= k 0)
                (list empty-board)
@@ -73,10 +108,12 @@
                  (lambda (positions) (safe? k positions))
                  (flatmap
                    (lambda (rest-of-queens)
-                     (map (lambda (new-row)
+                     (map 'list (lambda (new-row)
                             (adjoin-position
                               new-row k rest-of-queens))
                           (enumerate-interval 1 board-size)))
                    (queen-cols (- k 1)))))))
-    (queen-cols board-size))))
+    (queen-cols board-size)))
+
+(queens 3)
 
