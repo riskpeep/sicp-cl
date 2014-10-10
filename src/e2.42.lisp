@@ -66,8 +66,6 @@
     nil
     (cons low (enumerate-interval (+ low 1) high))))
 
-
-
 ;; 
 (defun adjoin-position (new-row k positions)
   "Adjoins a new row-column position to a set of positions"
@@ -83,17 +81,18 @@
   (and 
     ;; Check that there is only one queen in this column
     (= 1 (accumulate #'+ 0 
-                        (map 'list 
-                             (lambda (x) (if (= (cadr x) k)
-                                            1
-                                            0)) positions))))
+                     (map 'list 
+                          (lambda (x) 1)
+                          (filter (lambda (x) (= (cadr x) k)) positions))))
+    ;; Check the row
     (= 1 (accumulate #'+ 0 
-                        (map 'list 
-                             (lambda (x) (if (= (cadr x) k)
-                                            1
-                                            0)) 
-                             (filter (lambda (x) (= (cadr x) k)) positions)))) 
-    ;; TODO check the row
+                     (map 'list 
+                          (lambda (x) 1)
+                          (filter (lambda (x) (= 
+                                                (car (car (filter (lambda (x) (= (cadr x) k)) positions)))   
+                                                (car x)))
+                                  (filter (lambda (x) (= (cadr x) k)) positions)))))
+    )
     ;; TODO check the diagonals
 ;;       (not (accumulate #'or nil (map 'list (lambda (x) (not (= (cdr (nth k positions)) (cdr x)))) positions)))
 ;;
